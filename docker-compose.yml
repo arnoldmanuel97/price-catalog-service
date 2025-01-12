@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: oscarfonts/h2
+    ports:
+      - "9092:9092"
+    environment:
+      - H2_OPTIONS=-ifNotExists
+    volumes:
+      - ~/h2-data:/h2-data

@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: Price Catalog Service
+  version: 1.0.0
+paths:
+  /v1/brands/{brandId}/products/{productId}/prices:
+    get:
+      tags:
+        - Price
+      summary: Get Applicable Price
+      operationId: getApplicablePrice
+      description: Get applicable price for a given brand, product and date
+      parameters:
+        - name: brandId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Brand ID
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Product ID
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: 'yyyy-MM-dd HH:mm:ss'
+          description: Applicable date and time
+      responses:
+        '200':
+          description: Price found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+        '404':
+          description: Price not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+components:
+  schemas:
+    PriceDTO:
+      type: object
+      properties:
+        brandId:
+          type: integer
+          format: int64
+          description: Brand ID
+        productId:
+          type: integer
+          format: int64
+          description: Product ID
+        priceListId:
+          type: integer
+          format: int64
+          description: Price Range ID
+        startDate:
+          type: string
+          format: date-time
+          description: Start date of the price validity
+        endDate:
+          type: string
+          format: date-time
+          description: End date of the price validity
+        applicablePrice:
+          type: number
+          format: number
+          description: Applicable price
+    ErrorDTO:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          enum:
+            - RESOURCE_NOT_FOUND
+            - INTERNAL_SERVER_ERROR
+            - BAD_REQUEST
+          description: Type of the error
+        errorMessage:
+          type: string
+          description: Detailed error message
+        status:
+          type: string
+          description: HTTP status code associated with the error
+        path:
+          type: string
+          description: Request path where the error occurred
